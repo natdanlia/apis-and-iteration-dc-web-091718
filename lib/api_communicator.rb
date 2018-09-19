@@ -2,12 +2,39 @@ require 'rest-client'
 require 'json'
 require 'pry'
 
-def get_character_movies_from_api(character)
+def get_character_movies_from_api(character, names)
   #make the web request
-  response_string = RestClient.get('http://www.swapi.co/api/people/')
-  response_hash = JSON.parse(response_string)
-  
-  # NOTE: in this demonstration we name many of the variables _hash or _array. 
+
+  names.each do |element_hash|
+
+    if element_hash["name"] == character
+      return get_user_films(element_hash["films"])
+    end
+  end
+
+  puts "put a real character"
+
+#   found_character = response_hash["results"].find do |key|
+#       key["name"] == character
+#   end
+#     arr = []
+#   if found_character == nil
+#     puts "please enter a real character"
+#   else
+#   #  binding.pry
+#     found_character.each do |character_hash|
+#       character_hash["film"].each do |movie_url|
+#         response_string = RestClient.get(movies_url)
+#         response_hash = JSON.parse(response_string)
+#           response_hash["title"] >> arr
+#       end
+#     end
+#   end
+#
+# arr
+
+
+  # NOTE: in this demonstration we name many of the variables _hash or _array.
   # This is done for educational purposes. This is not typically done in code.
 
 
@@ -22,12 +49,35 @@ def get_character_movies_from_api(character)
   #  of movies by title. play around with puts out other info about a given film.
 end
 
-def print_movies(films_hash)
+def print_movies(films_array)
   # some iteration magic and puts out the movies in a nice list
+  films_array.each do |e|
+    puts e
+  end
 end
 
+
+def get_character_list
+  response_string = RestClient.get('http://www.swapi.co/api/people/')
+  response_hash = JSON.parse(response_string)
+  response_hash["results"]
+end
+
+def get_user_films(arr)
+  list_of_films = []
+  arr.each do |film_url|
+    response_string = RestClient.get(film_url)
+    response_hash = JSON.parse(response_string)
+    list_of_films << response_hash["title"]
+  end
+  list_of_films
+  ##puts "what"
+end
+
+
 def show_character_movies(character)
-  films_array = get_character_movies_from_api(character)
+  names = get_character_list
+  films_array = get_character_movies_from_api(character, names)
   print_movies(films_array)
 end
 
